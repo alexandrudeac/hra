@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="ro.adc.hra.base.OperationInfo" />
+		<typeAlias type="ro.adc.hra.base.PersonName" />
+		<typeAlias type="ro.adc.hra.base.Modification" />
+		<typeAlias type="ro.adc.hra.base.RecordTrace" />
+		<typeAlias type="ro.adc.hra.employee.Employee" />
+		<typeAlias type="ro.adc.hra.employee.EmployeeDetail" />
+		<typeAlias type="ro.adc.hra.employee.EmployeeRecord" />
+		<package name="ro.adc.hra" />
+	</typeAliases>
+	<typeHandlers>
+		<typeHandler handler="ro.adc.mybatis.jodatime.LocalDateTimeTypeHandler" />
+	</typeHandlers>
+</configuration>

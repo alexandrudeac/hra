@@ -1,0 +1,4 @@
+dependencies {
+	compile project(':hra-data')
+	compile project(':hra-services')
+}

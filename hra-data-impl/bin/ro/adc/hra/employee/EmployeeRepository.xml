@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ro.adc.hra.employee.EmployeeRepository">
+
+	<resultMap id="rmPersonName" type="PersonName">
+		<result property="firstName" column="FIRSTNAME" />
+		<result property="middleName" column="MIDDLENAME" />
+		<result property="lastName" column="LASTNAME" />
+	</resultMap>
+	
+	<resultMap id="rmModification" type="Modification">
+		<id property="id" column="MODIFICATIONID" />
+		<result property="operator" column="OPERATOR" />
+		<result property="timestamp" column="MODIFDATETIME" />
+	</resultMap>
+		
+	<resultMap id="rmRecordTrace" type="RecordTrace">
+		<result property="verno" column="VERNO" />
+		<result property="status" column="VERSTATUS" />
+		<association property="since" resultMap="rmModification" columnPrefix="SINCE"/>
+		<association property="until" resultMap="rmModification" columnPrefix="UNTIL"/>
+	</resultMap>
+
+	<resultMap id="rmEmployee" type="Employee">
+		<id property="uuid" column="EMPLOYEEUUID" />
+		<result property="code" column="CODE" />
+		<association property="name" resultMap="rmPersonName" />
+	</resultMap>
+
+	<resultMap id="rmEmployeeDetail" type="EmployeeDetail">
+		<result property="active" column="ACTIVE" />
+		<association property="basic" resultMap="rmEmployee" />
+	</resultMap>
+	
+	<resultMap id="rmEmployeeRecord" type="EmployeeRecord">
+		<id property="id" column="EMPLOYEEID"/>
+		<association property="detail" resultMap="rmEmployeeDetail"/>
+		<association property="recordTrace" resultMap="rmRecordTrace"/>
+	</resultMap>
+	
+	<sql id="employeeCriteriaWhere">
+		and e.VERSTATUS='C'
+		<if test="criteria != null">	
+			<if test="criteria.employeeUuidEqCriterion != null and criteria.employeeUuidEqCriterion != ''">
+				and e.EMPLOYEEUUID=#{criteria.employeeUuidEqCriterion}
+			</if>
+			<if test="criteria.employeeCodeEqCriterion != null and criteria.employeeCodeEqCriterion != ''">
+				and e.CODE=#{criteria.employeeCodeEqCriterion}
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="findCommon">
+		select e.EMPLOYEEID, e.EMPLOYEEUUID, e.CODE,
+		e.LASTNAME, e.FIRSTNAME, e.MIDDLENAME,
+		e.ACTIVE,
+		e.VERNO, e.VERSTATUS, 
+		e.SINCEMODIFICATIONID, s.OPERATOR as SINCEOPERATOR, s.MODIFDATETIME as SINCEMODIFDATETIME,
+		e.UNTILMODIFICATIONID, u.OPERATOR as UNTILOPERATOR, u.MODIFDATETIME as UNTILMODIFDATETIME
+		from EMPLOYEE e
+		inner join MODIFICATION s on s.MODIFICATIONID=e.SINCEMODIFICATIONID
+		left join  MODIFICATION u on u.MODIFICATIONID=e.UNTILMODIFICATIONID
+	</sql>
+
+	<select id="findOneEmployee" resultMap="rmEmployeeRecord">
+		<include refid="findCommon"/>
+		<where>
+			<include refid="employeeCriteriaWhere"/>
+		</where>
+	</select>
+	
+	<select id="findEmployees" resultMap="rmEmployeeRecord">
+		<include refid="findCommon"/>
+		<where>
+			<include refid="employeeCriteriaWhere"/>
+		</where>
+	</select>
+	
+	<insert id="createEmployee">
+		insert into EMPLOYEE (EMPLOYEEID, EMPLOYEEUUID, CODE,
+			FIRSTNAME, MIDDLENAME, LASTNAME,
+			ACTIVE,
+			VERNO, VERSTATUS,
+			SINCEMODIFICATIONID)
+		values (SQ_EMPLOYEE_IDENTITY.NEXTVAL, #{employeeDetail.basic.uuid}, #{employeeDetail.basic.code},
+			#{employeeDetail.basic.name.firstName},#{employeeDetail.basic.name.middleName}, #{employeeDetail.basic.name.lastName},
+			#{employeeDetail.active}, 
+			1, 'C',
+			#{modificationId})
+	</insert>
+	
+	<update id="updateEmployeeDetail">
+		update EMPLOYEE set
+			FIRSTNAME=#{employeeName.firstName},
+			MIDDLENAME=#{employeeName.middleName},
+			LASTNAME=#{employeeName.lastName},
+			VERNO=VERNO+1,
+			SINCEMODIFICATIONID=#{modificationId}
+		where VERSTATUS='C' and CODE=#{employeeCodeIs}
+	</update>
+	
+	<update id="updateEmployeeActiveState">
+		update EMPLOYEE set
+			ACTIVE = #{activeState},
+			VERNO=VERNO+1,
+			SINCEMODIFICATIONID=#{modificationId}
+		where VERSTATUS='C' and CODE=#{employeeCodeIs}
+	</update>
+	
+	<insert id="storeOldEmployeeVersion">
+		insert into EMPLOYEE(EMPLOYEEID, EMPLOYEEUUID, CODE,
+			FIRSTNAME, MIDDLENAME, LASTNAME,
+			ACTIVE,
+			VERNO, VERSTATUS,
+			SINCEMODIFICATIONID,UNTILMODIFICATIONID)
+		select SQ_EMPLOYEE_IDENTITY.NEXTVAL, EMPLOYEEUUID, CODE,
+			FIRSTNAME, MIDDLENAME, LASTNAME,
+			ACTIVE,
+			VERNO, 'O',
+			SINCEMODIFICATIONID, #{modificationId}
+		from EMPLOYEE
+		where VERSTATUS='C' and CODE=#{employeeCodeIs}
+	</insert>
+	
+	<update id="deleteEmployee">
+		update EMPLOYEE set
+			UNTILMODIFICATION=#{modificationId},
+			VERSTATUS='D'
+		where VERSTATUS='C' and CODE=#{employeeCodeIs}
+	</update>
+</mapper>

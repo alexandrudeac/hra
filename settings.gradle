@@ -1,0 +1,10 @@
+rootProject.name = 'hra'
+
+include 'hra-common'
+include 'hra-data'
+include 'hra-services'
+include 'hra-services-impl'
+include 'hra-data-impl'
+include 'hra-data-impl'
+include 'hra-webmvc'
+include 'hra-web'

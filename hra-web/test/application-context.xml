@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+                           http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.1.xsd
+                           http://www.springframework.org/schema/jdbc
+                           http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd">
+
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+	    <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+	    <property name="username" value="hra" />
+	    <property name="password" value="hra" />
+	</bean> -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	    <property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+	    <property name="url" value="jdbc:hsqldb:mem:PUBLIC;sql.syntax_ora=true" />
+	    <property name="username" value="sa" />
+	    <property name="password" value="" />
+	</bean>
+	
+  <import resource="classpath:META-INF/hra-data-context.xml"/>
+  <context:component-scan base-package="ro.adc.hra"/>
+  	<jdbc:initialize-database data-source="dataSource" enabled="true">
+		<jdbc:script location="classpath:ro/adc/hra/schema.sql" />
+		<jdbc:script location="classpath:ro/adc/hra/sequence.sql" />
+		<jdbc:script location="classpath:init.sql" />
+	</jdbc:initialize-database>
+    
+</beans>

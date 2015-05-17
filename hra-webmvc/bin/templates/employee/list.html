@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org/layout" layout:decorator="layout">
+<head>
+<title th:text="#{employee.list.title}">Employees</title>
+</head>
+<body>
+<h1 class="page-header" layout:fragment="contentTitle" th:text="#{employee.list.title}"></h1>
+<div layout:fragment="actions">
+  <th:block th:include="employee/fragments :: actions (current='list')"></th:block>
+</div>
+<div layout:fragment="content">
+	<div class="table-responsive">
+	   <table class="table table-striped">
+	     <thead>
+	       <tr>
+	         <th th:text="#{employee.code}">#</th>
+	         <th th:text="#{employee.name}">Name</th>
+	         <th th:text="#{employee.active}">Active</th>
+	         <th th:text="#{common.lastModifiedBy}">LastModifiedBy</th>
+	         <th th:text="#{common.lastModifyDate}">LastModifyDate</th>
+	       </tr>
+	     </thead>
+	     <tbody>
+	       <tr th:each="employeeRec : ${employees}">
+	         <th:block>
+	        	<td>
+	        		<a th:href="@{/employee/{code}/update(code=${employeeRec.detail.basic.code})}" 
+	         				th:text="${employeeRec.detail.basic.code}">adeac</a>
+				</td>
+	         <td th:text="${{employeeRec.detail.basic.name}}">DEAC, Alexandru</td>
+	         <td th:text="${{employeeRec.detail.active}}">Y</td>
+	         </th:block>
+	         <td th:text="${employeeRec.recordTrace.since.operator}">adeac</td>
+	         <td th:text="${{employeeRec.recordTrace.since.timestamp}}">2015-01-04 13:30</td>
+	       </tr>
+	     </tbody>
+	   </table>
+	</div>
+ </div> 
+<th:block layout:fragment="additionalJs">
+<script type="text/javascript" th:inline="javascript">
+	ko.applyBindings(new LayoutModel());
+</script>   
+</th:block>
+</body>
+</html>

@@ -1,0 +1,6 @@
+dependencies {
+	compile project(':hra-services')
+	compile 'org.springframework:spring-webmvc:4.1.5.RELEASE'
+	runtime 'org.thymeleaf:thymeleaf-spring4:2.1.4.RELEASE'
+	runtime 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.2.7'
+}

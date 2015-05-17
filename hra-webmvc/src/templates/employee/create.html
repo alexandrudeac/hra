@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org/layout" layout:decorator="layout">
+<head>
+<title th:text="#{employee.create}">Add Employee</title>
+</head>
+<body>
+<h1 class="page-header" layout:fragment="contentTitle" th:text="#{employee.list.title}"></h1>
+<div layout:fragment="actions">
+  <th:block th:include="employee/fragments :: actions (current='create')"></th:block>
+   <ul class="nav nav-sidebar">
+	<li><a href="#" data-bind="click: saveEmployee" th:text="#{common.save}">Save</a></li>
+  </ul>
+</div>
+<div layout:fragment="content">
+<form id="createEmployeeForm" action="" method="post">
+	<th:block th:include="employee/fragments :: detailFields (codeEnabled=true, activeEnabled=true, employeeDetail=${employeeDetail})"></th:block>
+</form>
+</div>
+<script type="text/javascript" th:inline="javascript" layout:fragment="additionalJs">
+	function CreateEmployeeModel() {
+		LayoutModel();
+		this.saveEmployee = function() {
+			$('#createEmployeeForm').submit();
+		}
+	}
+	ko.applyBindings(new CreateEmployeeModel());
+</script>
+</body>
+</html>

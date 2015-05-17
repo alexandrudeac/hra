@@ -1,0 +1,12 @@
+dependencies {
+	compile project(':hra-services-impl')
+	compile project(':hra-data-impl')
+	compile project(':hra-webmvc')
+	compile("org.springframework.boot:spring-boot-starter-web:1.2.2.RELEASE") {
+		exclude module: "spring-boot-starter-tomcat"
+	    exclude module: "spring-boot-starter-logging"
+	    exclude module: "logback-classic"
+	    exclude module: "hibernate-validator"
+	}
+	runtime("org.springframework.boot:spring-boot-starter-jetty:1.2.2.RELEASE")
+}

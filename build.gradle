@@ -1,0 +1,30 @@
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	
+	group = 'ro.adc.hra'
+	version = '1.0-SNAPSHOT'
+	
+	repositories {
+		mavenCentral()
+	}
+
+	sourceSets {
+		main {
+			java {
+				srcDir 'src'
+			}
+			resources {
+				srcDir 'src'
+			}
+		}
+		test {
+			java {
+				srcDir 'test'
+			}
+			resources {
+				srcDir 'test'
+			}
+		}
+	}
+}

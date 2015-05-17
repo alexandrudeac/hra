@@ -1,0 +1,14 @@
+dependencies {
+	compile project(':hra-data')
+	compile("org.mybatis:mybatis-spring:1.2.2")
+	compile("org.mybatis:mybatis:3.2.8")
+	
+	testCompile ('org.springframework:spring-test:4.1.5.RELEASE')
+	testCompile ('org.dbunit:dbunit:2.5.0')
+	testCompile ('com.github.springtestdbunit:spring-test-dbunit:1.2.1')
+		
+	testRuntime ('org.springframework:spring-context:4.1.5.RELEASE')
+	testRuntime ('org.springframework:spring-jdbc:4.1.5.RELEASE')
+	testRuntime ('org.hsqldb:hsqldb:2.3.2')
+	
+}

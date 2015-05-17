@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.thymeleaf.org/layout"
+	layout:decorator="layout">
+<head>
+<title>Employee actions</title>
+</head>
+<body>
+	<div th:fragment="actions (current)">
+		<ul class="nav nav-sidebar">
+			<li th:class="${current== 'list' ? 'active' : ''}"><a th:href="@{/employee}"><th:block th:text="#{employee.list}">List</th:block><span class="sr-only" th:if="${current == 'list'}">(current)</span></a></li>
+			<li th:class="${current== 'create' ? 'active' : ''}"><a th:href="@{/employee/create}"><th:block th:text="#{employee.create}">Create</th:block><span class="sr-only" th:if="${current == 'create'}">(current)</span></a></li>
+		</ul>
+	</div>
+	<div th:fragment="detailFields (codeEnabled, activeEnabled, employeeDetail)">
+		<div class="form-group">
+    		<label for="txtEmployeeCode" th:text="#{employee.code}">Code</label>
+    		<div th:switch="${codeEnabled}">
+				<input th:case="${true}" name="basic.code" type="text" class="form-control" id="txtEmployeeCode" th:placeholder="#{employee.code}" required="required"
+						 th:value="${employeeDetail?.basic?.code}"/>
+				<th:block th:case="${false}">
+					<input name="basic.code" type="hidden" required="required" th:value="${employeeDetail?.basic?.code}"/>
+					<input type="text" class="form-control" id="txtEmployeeCode" disabled="disabled" th:value="${employeeDetail?.basic?.code}"/>
+				</th:block>
+			</div>
+  		</div>
+		<div class="form-group">
+			<label for="txtEmployeeLastName" th:text="#{employee.name.last}">Last Name</label>
+			<input name="basic.name.lastName" type="text" class="form-control" id="txtEmployeeLastName" th:placeholder="#{employee.name.last}" required="required"
+					th:value="${employeeDetail?.basic?.name?.lastName}"/>
+	  	</div>
+  		<div class="form-group">
+	    	<label for="txtEmployeeFirstName" th:text="#{employee.name.first}">First Name</label>
+	    	<input name="basic.name.firstName" type="text" class="form-control" id="txtEmployeeFirstName" th:placeholder="#{employee.name.first}" required="required"
+	    			th:value="${employeeDetail?.basic?.name?.firstName}"/>
+	  	</div>
+	  	<div class="form-group">
+	    	<label for="txtEmployeeMiddleName" th:text="#{employee.name.middle}">Middle Name</label>
+	    	<input name="basic.name.middleName" type="text" class="form-control" id="txtEmployeeMiddleName" th:placeholder="#{employee.name.middle}"
+	    			th:value="${employeeDetail?.basic?.name?.middleName}"/> 
+	  	</div>
+	 	<div class="checkbox" th:if="${activeEnabled}">
+	    	<label>
+	    		<input name="active" type="checkbox" th:checked="${employeeDetail?.active}"/>
+	    		<th:block th:text="#{employee.active}">Active</th:block>
+    		</label>
+	  		<p class="help-block" th:text="#{employee.active.tooltip}"></p>
+	  	</div>
+	  	<div th:if="${!activeEnabled}" th:switch="${employeeDetail?.active}">
+	  		<span th:case="${true}" th:text="#{employee.active.true}">Active</span>
+	  		<span th:case="${false}" th:text="#{employee.active.false}">Not active</span>
+	  	</div>
+	</div>
+</body>
+</html>

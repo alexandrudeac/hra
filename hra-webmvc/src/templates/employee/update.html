@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.thymeleaf.org/layout" layout:decorator="layout">
+<head>
+<title th:text="#{employee.update}">Update Employee</title>
+</head>
+<body>
+<h1 class="page-header" layout:fragment="contentTitle" th:text="#{employee.list.title}"></h1>
+<h2 class="sub-header" layout:fragment="contentSubtitle" th:text="${{employeeRecord.detail.basic.name}}"></h2>
+<div layout:fragment="actions">
+  <th:block th:include="employee/fragments :: actions (current=null)"></th:block>
+  <ul class="nav nav-sidebar">
+	<li><a href="#" data-bind="click: saveEmployee" th:text="#{common.save}">Save</a></li>
+	<li><a href="#" data-bind="click: toggleEmployeeActiveState, text: employeeActiveStateLabel" th:text="#{common.save}">Disable</a></li>
+	<li><a href="#" data-bind="click: deleteEmployee" th:text="#{common.delete}">Delete</a></li>
+  </ul>
+</div>
+<div layout:fragment="content">
+<form id="updateEmployeeForm" action="" method="post">
+	<th:block th:include="employee/fragments :: detailFields (codeEnabled=false, activeEnabled=false, employeeDetail=${employeeDetail})"></th:block>
+</form>
+</div>
+<th:block layout:fragment="additionalJs">
+	<script type="text/javascript" th:inline="javascript">
+		function UpdateEmployeeModel() {
+			LayoutModel();
+			var self = this;
+			var enableLbl = /*[[#{common.enable}]]*/ 'Enable';
+			var disableLbl = /*[[#{common.disable}]]*/ 'Disable';
+			var activeStateInitValue = /*[[${employeeDetail.active}]]*/ false;
+			this.activeState = ko.observable(activeStateInitValue);
+			this.employeeActiveStateLabel = ko.computed(function() {
+				return this.activeState() ? disableLbl: enableLbl;
+			}, this);
+			this.toggleEmployeeActiveState = function() {
+				var url = /*[[@{/employee/{code}/updateActiveState(code=${employeeDetail.basic.code})}]]*/ 'employee/{code}/updateActiveState';
+				$.ajax({
+					method: 'POST',
+					url : url,
+					data: {active: !this.activeState()},
+					dataType: 'json'
+				}).done(function(rs) {
+					if (rs.errors) {
+						$.each(rs.errors, function(err) {
+							self.errors.push(err);
+						});
+					}
+					self.activeState(activeState);
+				});
+			};
+			
+			this.deleteEmployee = function() {
+				var url = /*[[@{/employee/{code}/delete(code=${employeeDetail.basic.code})}]]*/ 'employee/{code}/delete';
+				$.ajax({
+					method: 'POST',
+					url : url,
+					data: {},
+					dataType: 'json'
+				}).done(function(rs) {
+					if (rs.errors) {
+						$.each(rs.errors, function(err) {
+							self.errors.push(err);
+						});
+					}
+					var listUrl = /*[[@{/employee}]]*/ 'employee';
+					window.location.replace(listUrl);
+				});
+			};
+			
+			this.saveEmployee = function() {
+				$('#updateEmployeeForm').submit();
+			};
+		}
+		ko.applyBindings(new UpdateEmployeeModel());
+	</script>
+</th:block>
+</body>
+</html>
